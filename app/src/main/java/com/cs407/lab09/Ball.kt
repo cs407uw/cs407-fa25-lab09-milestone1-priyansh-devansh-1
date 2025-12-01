@@ -23,7 +23,7 @@ class Ball(
     private var isFirstUpdate = true
 
     init {
-        // TODO: Call reset()
+        reset()
     }
 
     /**
@@ -38,6 +38,32 @@ class Ball(
             return
         }
 
+        val speedFactor = 50f
+        val a0x = accX * speedFactor
+        val a0y = accY * speedFactor
+
+        val a1x = xAcc * speedFactor
+        val a1y = yAcc * speedFactor
+
+        // Equation 1
+        val newVelX = velocityX + 0.5f * (a1x + a0x) * dT
+        val newVelY = velocityY + 0.5f * (a1y + a0y) * dT
+
+        // Equation 2
+        val dt2 = dT * dT
+        val dx = velocityX * dT + (1f / 6f) * dt2 * (3f * a0x + a1x)
+        val dy = velocityY * dT + (1f / 6f) * dt2 * (3f * a0y + a1y)
+
+        posX += dx
+        posY += dy
+
+        velocityX = newVelX
+        velocityY = newVelY
+        accX = xAcc
+        accY = yAcc
+
+        checkBoundaries()
+
     }
 
     /**
@@ -48,6 +74,29 @@ class Ball(
     fun checkBoundaries() {
         // TODO: implement the checkBoundaries function
         // (Check all 4 walls: left, right, top, bottom)
+        val maxX = backgroundWidth - ballSize
+        if (posX < 0f) {
+            posX = 0f
+            velocityX = 0f
+            accX = 0f
+        }
+        else if (posX > maxX) {
+            posX = maxX
+            velocityX = 0f
+            accX = 0f
+        }
+
+        val maxY = backgroundHeight - ballSize
+        if (posY < 0f) {
+            posY = 0f
+            velocityY = 0f
+            accY = 0f
+        }
+        else if (posY > maxY) {
+            posY = maxY
+            velocityY = 0f
+            accY = 0f
+        }
     }
 
     /**
@@ -56,6 +105,13 @@ class Ball(
      */
     fun reset() {
         // TODO: implement the reset function
+        posX = (backgroundWidth - ballSize) / 2f
+        posY = (backgroundHeight - ballSize) / 2f
+        velocityX = 0f
+        velocityY = 0f
+        accX = 0f
+        accY = 0f
+        isFirstUpdate = true
         // (Reset posX, posY, velocityX, velocityY, accX, accY, isFirstUpdate)
     }
 }
